@@ -9,12 +9,15 @@ app.use(express.json());
 
 // Routes
 
+
+
 // add a new applicant
-app.post("/applicants", async(req,res) => {
+app.post("/Apply", async(req,res) => {
     try {
-        const{firstname} = req.body;
-        const newApp = await pool.query("INSERT INTO applicants (firstname) VALUES($1) RETURNING *",
-        [firstname]);
+        const{firstname, lastname, email, isApproved} = req.body;
+        const newApp = await pool.query("INSERT INTO applicants (firstname, lastname, email, isApproved)"+
+        " VALUES($1,$2,$3,FALSE) RETURNING *",
+        [req.body.firstname,req.body.lastname,req.body.email]);
         res.json(newApp.rows[0]); 
 
     } catch (error) {
@@ -23,7 +26,7 @@ app.post("/applicants", async(req,res) => {
 })
 
 // get all applicants
-app.get("/applicants", async(req,res) => {
+app.get("/Apply", async(req,res) => {
     try {
         const allApps = await pool.query("SELECT * FROM applicants")
         res.json(allApps.rows);
@@ -33,7 +36,7 @@ app.get("/applicants", async(req,res) => {
 })
 
 // update approval status of applicant
-app.put("/applicants/:id", async(req,res) => {
+app.put("/Apply/:id", async(req,res) => {
 
     try {
         const { id } = req.params;

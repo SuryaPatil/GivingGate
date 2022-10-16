@@ -16,7 +16,19 @@ const Apply = () => {
             "firstName": firstName,
             "lastName": lastName,
             "email": email,
-          }
+        }
+
+        axios
+      .post("http://localhost:5000/Apply", data)
+      .then(res => {
+        if (!firstName || !lastName || !email) return;
+        
+      })
+      .catch(error => {
+            console.log(error);
+      })
+
+        
         }
 
     return (
