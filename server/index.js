@@ -14,10 +14,17 @@ app.use(express.json());
 // add a new applicant
 app.post("/Apply", async(req,res) => {
     try {
-        const{firstname, lastname, email, isApproved} = req.body;
-        const newApp = await pool.query("INSERT INTO applicants (firstname, lastname, email, isApproved)"+
+        const{firstName, lastName, email, isApproved} = req.body;
+
+        console.log(
+            req.body.firstName, 
+            req.body.lastName, 
+            req.body.email
+        )
+
+        const newApp = await pool.query("INSERT INTO applicants (firstName, lastName, email, isApproved)"+
         " VALUES($1,$2,$3,FALSE) RETURNING *",
-        [req.body.firstname,req.body.lastname,req.body.email]);
+        [req.body.firstName, req.body.lastName, req.body.email]);
         res.json(newApp.rows[0]); 
 
     } catch (error) {
@@ -50,7 +57,7 @@ app.put("/Apply/:id", async(req,res) => {
 })
 
 // add a new corporation
-app.post("/corporations", async(req, res)=> {
+app.post("/Corporations", async(req, res)=> {
     try {
         const {name, amount_deposited} = req.body;
          const newCorp = await pool.query(
@@ -64,7 +71,7 @@ app.post("/corporations", async(req, res)=> {
 })
 
 // show all corporations
-app.get("/corporations/:id", async(req,res) => {
+app.get("/ListCorporations", async(req,res) => {
     try {
         const allCorps = await pool.query("SELECT * FROM corporations")
         res.json(allCorps.rows);
@@ -74,7 +81,7 @@ app.get("/corporations/:id", async(req,res) => {
 })
 
 // update corporation's total deposit
-app.put("/corporations", async(req,res) => {
+app.put("/Corporations", async(req,res) => {
     try {
         const { id } = req.params;
         const {new_deposit} = req.body;
