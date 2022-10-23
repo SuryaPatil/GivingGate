@@ -1,11 +1,28 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export const Corporations = () => {
     const [name, setname] = useState('');
     const [amount_deposited, setamount_deposited] = useState('');
+    const [data, setData] = useState(null);
+    const [corps, setCorps] = useState([]); 
+
+    const getCorps = async () => {
+
+        try {
+            const response = await axios.get("http://localhost:5000/ListCorporations")
+            setCorps(response.data);
+        } catch (error) {
+            console.log(error);    
+        }
+    }
+
+    useEffect(() => {
+        getCorps();
+    },[]);
+    console.log(corps);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,6 +32,15 @@ export const Corporations = () => {
             "name": name,
             "amount_deposited": amount_deposited,
         }
+
+        corps.map(corp => {
+            if(corps.name == name){
+                console.log("This company already exists");
+                return; 
+            }
+        })
+
+        
 
         axios
             .post("http://localhost:5000/Corporations", data)

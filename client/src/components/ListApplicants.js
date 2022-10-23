@@ -14,11 +14,25 @@ const ListApplicants = () => {
         }
     }
 
-    useEffect(() => {
-        getApps();
-    },[]);
+    const approveApp = async (id) => {
+      try{
+          const approveApp = await axios.delete(`http://localhost:5000/listApplicants/${id}`)
+          console.log(approveApp);
+          setApps(apps.filter(app => app.id !== id));
 
-    console.log(apps);
+      }
+      catch( err ){
+        console.error(err.message); 
+      }
+    }
+
+    useEffect(() => {
+      getApps();
+  },[]);
+
+  console.log(apps);
+
+  
   return (
     <div>ListApplicants
     <p></p>
@@ -28,16 +42,16 @@ const ListApplicants = () => {
         <th>Firstname</th>
         <th>Lastname</th>
         <th>Email</th>
-        <th>Approved</th>
       </tr>
     </thead>
     <tbody>
        
     {apps.map(app => (
-        <tr>
+        <tr key ={app.id}>
             <td>{app.firstname}</td>
             <td>{app.lastname}</td>
             <td>{app.email}</td>
+            <td>{<button onClick={() => approveApp(app.id)}>Approve</button> }</td>
             
         </tr>
     ))}

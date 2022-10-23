@@ -43,14 +43,13 @@ app.get("/Apply", async(req,res) => {
 })
 
 // update approval status of applicant
-app.put("/Apply/:id", async(req,res) => {
+app.delete("/listApplicants/:id", async(req,res) => {
 
     try {
         const { id } = req.params;
-        const {description} = req.body;
-        const updateApp = await pool.query(
-   //         "UPDATE applicants SET isapproved CASE WHEN isapproved = FALSE "
-        )
+        const approveApp = await pool.query(
+            "DELETE FROM applicants WHERE id = $1",[id]
+        );
     } catch (error) {
         console.error(error.message);
     }
@@ -67,6 +66,16 @@ app.post("/Corporations", async(req, res)=> {
          res.json(newCorp.rows[0]); 
     } catch (error) {
         console.error(error.message);
+    }
+})
+
+// show all corporations
+app.get("/Corporations", async(req,res) => {
+    try {
+        const allCorps = await pool.query("SELECT * FROM corporations")
+        res.json(allCorps.rows);
+    } catch (error) {
+        console.error(error.message)
     }
 })
 

@@ -33,7 +33,7 @@ const Apply = () => {
     return (
         <section className='section'>
           <form className='form' onSubmit={handleSubmit}>
-            <h5>Register</h5>
+            <h5>Application</h5>
             <div className='form-row'>
               <label htmlFor='firstName' className='form-label'>
                 First Name
