@@ -8,6 +8,7 @@ import {BrowserRouter as Router,
   import Contact from "./components/Contact";
   import ListApplicants from './components/ListApplicants';
   import ListCorporations from './components/ListCorporations';
+import ConnectWallet from './components/ConnectWallet';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/Contact" element={<Contact/>}/>
         <Route path="/ListApplicants" element={<ListApplicants/>}/>
         <Route path="/ListCorporations" element={<ListCorporations/>}/>
+        <Route path="/ConnectWallet" element={<ConnectWallet/>}/>
         </Routes>
       </Router>
     </div>
