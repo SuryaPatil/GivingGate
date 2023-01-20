@@ -14,17 +14,18 @@ app.use(express.json());
 // add a new applicant
 app.post("/Apply", async(req,res) => {
     try {
-        const{firstName, lastName, email, isApproved} = req.body;
+        const{firstName, lastName, email, address} = req.body;
 
         console.log(
             req.body.firstName, 
             req.body.lastName, 
-            req.body.email
+            req.body.email,
+            req.body.address
         )
 
-        const newApp = await pool.query("INSERT INTO applicants (firstName, lastName, email, isApproved)"+
-        " VALUES($1,$2,$3,FALSE) RETURNING *",
-        [req.body.firstName, req.body.lastName, req.body.email]);
+        const newApp = await pool.query("INSERT INTO applicants (firstName, lastName, email, address)"+
+        " VALUES($1,$2,$3,$4) RETURNING *",
+        [req.body.firstName, req.body.lastName, req.body.email, req.body.address]);
         res.json(newApp.rows[0]); 
 
     } catch (error) {

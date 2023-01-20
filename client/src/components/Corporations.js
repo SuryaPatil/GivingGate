@@ -1,16 +1,32 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ethers } from 'ethers'
-
 const contractABI = require("../utils/contract.json");
-const contractAddress = "0x7C8973fE68ae535164B14AbBbEb1d46D30537354"
+const contractAddress = "0x9c502f8CDEBeB59fbED35093D0225418395F6122"
 
 export const Corporations = () => {
     const [name, setname] = useState('');
     const [amount_deposited, setamount_deposited] = useState('');
     const [corps, setCorps] = useState([]); 
+    const [accountBalance, setAccountBalance] = useState("");
+    const [donations, setDonations] = useState([]);
+
+    useEffect(() => {
+        if(!window.ethereum) {
+            return;
+        }
+        getAccountBalance()
+    }, [])
+
+    const getAccountBalance = async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
+        const contract = new ethers.Contract(contractAddress, contractABI, signer)
+
+        const balance = await provider.getBalance(contractAddress);
+        setAccountBalance(ethers.utils.formatEther(balance))
+    }
 
     const deposit = async () => {
         const {ethereum} = window; 
@@ -26,14 +42,8 @@ export const Corporations = () => {
                 contractABI,
                 signer,
               );
-            let bigNum = await contract.getBalance()
-            console.log(await bigNum.toNumber())
            const txn = await contract.donate(name, {value: ethers.utils.parseEther(amount_deposited.toString()), 
            gasLimit: 500000});
-
-            bigNum = await contract.getBalance()
-            console.log(await bigNum.toNumber())
-
             await txn.wait();
             console.log("mined ", txn.hash);
             console.log("deposit made!"); 
@@ -42,8 +52,32 @@ export const Corporations = () => {
           } catch (error) {
             console.log(error);
           }
-        
     }
+    const getDonations = async () => {
+        try {
+          const { ethereum } = window;
+          if (ethereum) {
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const signer = provider.getSigner();
+            const buyMeACoffee = new ethers.Contract(
+              contractAddress,
+              contractABI,
+              signer
+            );
+            
+            console.log("fetching donations from the blockchain..");
+            const donations = await buyMeACoffee.getDonations();
+            console.log("fetched!");
+            setDonations(donations);
+            console.log(donations)
+          } else {
+            console.log("Metamask is not connected");
+          }
+          
+        } catch (error) {
+          console.log(error);
+        }
+      };
 
     const getCorps = async () => {
 
@@ -57,42 +91,31 @@ export const Corporations = () => {
 
     useEffect(() => {
         getCorps();
+        getDonations(); 
     },[]);
-    console.log(corps);
+    //console.log(corps);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-     //   console.log(name, amount_deposited)
 
-        let data = {
-            "name": name,
-            "amount_deposited": amount_deposited,
-        }
+    }
+    const getDate = async (timestamp) => {
 
-        corps.map(corp => {
-            if(corps.name === name){
-                console.log("This company already exists");
-                return null; 
-            }
-            return null;
-        })
+    //    const date = new Date(timestamp).toString();
+     //   return date; 
 
-        axios
-            .post("http://localhost:5000/Corporations", data)
-            .then(res => {
-                if (!name || !amount_deposited) return;
+        return timestamp;
 
-            })
-            .catch(error => {
-                console.log(error);
-            })
     }
     return (
+        
         <section className='section'
         style={{
             position: 'absolute', left: '50%', top: '50%',
             transform: 'translate(-50%, -50%)'
         }}>
+            <h1>Giving Gate: A decentralized charity for ex-felons</h1>
+            <h2 className="balance">{accountBalance} ETH Locked</h2>
             <form className='form' onSubmit={handleSubmit}>
                 <div className='form-row'
                 >
@@ -133,7 +156,18 @@ export const Corporations = () => {
                 </button>
                 </div>
             </form>
+            {(donations.map((donation, idx) => {
+        return (
+          <div key={idx} style={{border:"2px solid", "borderRadius":"5px", padding: "5px", margin: "5px"}}>
+            <p>At {Number(donation.timestamp.toString())}, <span style={{ fontWeight: 'bold' }}>{donation.name} </span> 
+            donated <span style={{ fontWeight: 'bold' }}>{Number(ethers.utils.formatEther(donation.amount))}</span>, 
+            with address {donation.from}</p>
+          </div>
+        )
+      }))}
+            
         </section>
+         
     );
 }
 
