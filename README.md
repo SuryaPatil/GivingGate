@@ -8,7 +8,7 @@ Users connect to their Metamask wallet. Once this is done, they can view the amo
 
 https://github.com/SuryaPatil/GivingGate/assets/78182536/6e4fdee9-25d3-4781-ab53-89560ed13ed9
 
-
+View previous transactions with this smart contract here: https://goerli.etherscan.io/address/0x6530500A73bC2EB655C714Fe90B04fFA1b408D03
 
 # Notes
 A companion repository, https://github.com/SuryaPatil/GivingGate-contracts, contains the smart contract used for the project
